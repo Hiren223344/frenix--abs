@@ -179,3 +179,13 @@ export const deductCredits = async (userId: string, amount: number) => {
     console.error('Failed to deduct credits:', error);
   }
 };
+export const getRateLimit = async () => {
+  try {
+    const response = await fetch('/api/v1/ratelimit');
+    if (!response.ok) throw new Error('Failed to fetch rate limit');
+    return await response.json();
+  } catch (error) {
+    console.error('Rate limit fetch error:', error);
+    return { usage: 0, limit: 20, remaining: 20 };
+  }
+};

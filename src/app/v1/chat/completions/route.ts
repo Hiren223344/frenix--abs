@@ -23,6 +23,8 @@ const SYSTEM_PROMPT = fs.existsSync(SYSTEM_PROMPT_PATH)
   ? fs.readFileSync(SYSTEM_PROMPT_PATH, "utf8")
   : "You are Uttam Vara, built by Frenix Labs. Be direct and technical.";
 
+import { RateLimitService } from "@/services/rate-limit";
+
 export async function POST(req: Request) {
   try {
     let userId: string | null = null;
@@ -48,6 +50,21 @@ export async function POST(req: Request) {
           code: 401
         }
       }, { status: 401 });
+    }
+
+    // 2.5 Rate Limiting Check (20 RPM & 500 RPD)
+    const ratelimit = await RateLimitService.checkLimit(userId, 20, 500);
+    if (!ratelimit.allowed) {
+      const limitType = ratelimit.reason === "rpd" ? "daily" : "minute";
+      const limitValue = ratelimit.reason === "rpd" ? 500 : 20;
+      
+      return NextResponse.json({ 
+        error: {
+          message: `Rate limit exceeded. You are limited to ${limitValue} requests per ${limitType}. Please try again in ${ratelimit.retryAfter} seconds.`,
+          type: "rate_limit_error",
+          code: 429
+        }
+      }, { status: 429 });
     }
 
     console.log(`[API] Authenticated User ID: ${userId}`);

@@ -10,6 +10,7 @@
   "dependencies": {
     "@clerk/nextjs": "^7.3.3",
     "@tailwindcss/postcss": "^4.3.0",
+    "@upstash/redis": "^1.38.0",
     "appwrite": "^25.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

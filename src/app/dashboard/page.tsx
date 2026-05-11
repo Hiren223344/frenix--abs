@@ -9,7 +9,7 @@ import {
 } from 'recharts';
 import { Activity, Cpu, Database, Send, Zap } from 'lucide-react';
 import { client } from '@/lib/appwrite';
-import { getUserStats } from '@/services/tracking';
+import { getUserStats, getRateLimit } from '@/services/tracking';
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePathname } from 'next/navigation';
@@ -20,6 +20,10 @@ export default function DashboardPage() {
   const pathname = usePathname();
   const [pingStatus, setPingStatus] = useState<string | null>(null);
   const [stats, setStats] = useState<any[]>([]);
+  const [rlStats, setRlStats] = useState({ 
+    rpm: { usage: 0, limit: 20 }, 
+    rpd: { usage: 0, limit: 500 } 
+  });
   const [loading, setLoading] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -32,8 +36,12 @@ export default function DashboardPage() {
 
   const fetchStats = async () => {
     try {
-      const data = await getUserStats(user?.id || '');
-      setStats(data);
+      const [statsData, rlData] = await Promise.all([
+        getUserStats(user?.id || ''),
+        getRateLimit()
+      ]);
+      setStats(statsData);
+      setRlStats(rlData);
     } catch (error) {
       console.error("Failed to fetch dashboard stats:", error);
     } finally {
@@ -187,8 +195,8 @@ export default function DashboardPage() {
               {[
                 { label: 'Total Tokens', value: `${(totals.tokens / 1000).toFixed(1)}k`, sub: 'Real-time usage', icon: Zap },
                 { label: 'Total Requests', value: totals.requests, sub: 'Database entries', icon: Activity },
-                { label: 'Active Models', value: totals.models, sub: 'uttam-vara active', icon: Cpu },
-                { label: 'Storage', value: `~${stats.length * 0.5} KB`, sub: 'Log footprint', icon: Database },
+                { label: 'RPM Usage', value: `${rlStats.rpm.usage}/${rlStats.rpm.limit}`, sub: 'Requests per minute', icon: Activity },
+                { label: 'Daily Limit', value: `${rlStats.rpd.usage}/${rlStats.rpd.limit}`, sub: 'Requests per day', icon: Database },
               ].map((item, idx) => (
                 <motion.div 
                   key={item.label}
