@@ -116,43 +116,24 @@ export const getApiKeys = async (userId: string) => {
 
 export const getUserStats = async (userId: string) => {
   try {
-    const response = await databases.listDocuments(
-      DATABASE_ID,
-      REQUESTS_COLLECTION_ID,
-      [Query.equal('userId', userId)]
-    );
-    return response.documents;
+    const response = await fetch('/api/v1/stats');
+    if (!response.ok) throw new Error('Failed to fetch stats');
+    const data = await response.json();
+    return data.stats || [];
   } catch (error) {
-    console.error('Failed to fetch stats from Appwrite:', error);
+    console.error('Failed to fetch stats from proxy:', error);
     return [];
   }
 };
 
 export const getUserCredits = async (userId: string): Promise<number> => {
   try {
-    const response = await databases.listDocuments(
-      DATABASE_ID,
-      USERS_COLLECTION_ID,
-      [Query.equal('userId', userId)]
-    );
-    
-    if (response.documents.length > 0) {
-      return response.documents[0].credits;
-    }
-    
-    // Initialize user with $5.00 if not found
-    await databases.createDocument(
-      DATABASE_ID,
-      USERS_COLLECTION_ID,
-      ID.unique(),
-      {
-        userId,
-        credits: 5.0
-      }
-    );
-    return 5.0;
+    const response = await fetch('/api/v1/stats');
+    if (!response.ok) throw new Error('Failed to fetch credits');
+    const data = await response.json();
+    return data.credits || 0;
   } catch (error) {
-    console.error('Failed to get user credits:', error);
+    console.error('Failed to get user credits from proxy:', error);
     return 0;
   }
 };

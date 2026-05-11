@@ -1,9 +1,9 @@
-import { Redis } from "@upstash/redis";
+import Redis from "ioredis";
 
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-});
+// Use local Redis by default
+const redis = new Redis(process.env.REDIS_URL || "redis://localhost:6379");
+
+redis.on("error", (err) => console.error("Redis Client Error", err));
 
 export class RateLimitService {
   static async checkLimit(userId: string, rpmLimit: number = 20, rpdLimit: number = 500): Promise<{
@@ -18,15 +18,13 @@ export class RateLimitService {
     const dailyKey = `ratelimit:${userId}:rpd:${now.toISOString().split('T')[0]}`;
 
     try {
-      // Run both increments in parallel
       const [rpmCount, rpdCount] = await Promise.all([
         redis.incr(minuteKey),
         redis.incr(dailyKey)
       ]);
       
-      // Set expiry for new keys
       if (rpmCount === 1) await redis.expire(minuteKey, 60);
-      if (rpdCount === 1) await redis.expire(dailyKey, 86400); // 24 hours
+      if (rpdCount === 1) await redis.expire(dailyKey, 86400);
 
       if (rpdCount > rpdLimit) {
         return {
@@ -71,8 +69,8 @@ export class RateLimitService {
     ]);
 
     return {
-      rpm: parseInt((rpmVal as string) || "0", 10),
-      rpd: parseInt((rpdVal as string) || "0", 10),
+      rpm: parseInt(rpmVal || "0", 10),
+      rpd: parseInt(rpdVal || "0", 10),
     };
   }
 }
