@@ -1,0 +1,129 @@
+@import url('https://api.fontshare.com/v2/css?f[]=supreme@400,500,700,800&display=swap');
+@import "tw-animate-css";
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: #000000;
+  --foreground: #ffffff;
+  
+  --color-primary-custom: #ffffff;
+  --color-accent-custom: #1A1A17;
+  --color-background-custom: #000000;
+  --color-text-primary-custom: #ffffff;
+  --color-link-custom: #ffffff;
+
+  --font-body: 'Supreme', sans-serif;
+  --font-heading: 'Supreme', sans-serif;
+
+  --text-h1: clamp(32px, 5vw, 48px);
+  --text-h2: clamp(24px, 4vw, 32px);
+  --text-body: 16px;
+
+  --spacing-base: 8px;
+  --radius: 0.625rem;
+
+  --card: #111111;
+  --card-foreground: #ffffff;
+  --popover: #111111;
+  --popover-foreground: #ffffff;
+  --primary: #ffffff;
+  --primary-foreground: #000000;
+  --secondary: #1A1A17;
+  --secondary-foreground: #ffffff;
+  --muted: #1A1A17;
+  --muted-foreground: #a1a1aa;
+  --accent: #1A1A17;
+  --accent-foreground: #ffffff;
+  --destructive: #ff0000;
+  --border: #27272a;
+  --input: #27272a;
+  --ring: #ffffff;
+}
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  
+  --font-body: var(--font-body);
+  --font-heading: var(--font-heading);
+}
+
+@layer base {
+  body {
+    @apply antialiased font-body bg-background text-foreground;
+    font-size: var(--text-body);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-white font-medium font-heading;
+  }
+
+  h1 {
+    font-size: var(--text-h1);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  h2 {
+    font-size: var(--text-h2);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+
+  a {
+    @apply text-white no-underline border-b border-transparent transition-colors duration-200;
+  }
+
+  a:hover {
+    @apply border-white;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-spring-in {
+  animation: springIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.animate-scale-up {
+  animation: scaleUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.delay-1 { animation-delay: 0.1s; opacity: 0; }
+.delay-2 { animation-delay: 0.2s; opacity: 0; }
+.delay-3 { animation-delay: 0.3s; opacity: 0; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes springIn {
+  0% { opacity: 0; transform: translateY(20px) scale(0.95); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes scaleUp {
+  0% { opacity: 0; transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
+}
