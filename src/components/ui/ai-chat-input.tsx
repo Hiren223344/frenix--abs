@@ -3,7 +3,7 @@
 import * as React from "react"
 import { useState, useEffect, useRef } from "react";
 import { Lightbulb, Mic, Globe, Paperclip, Send } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, Variants } from "motion/react";
  
 const PLACEHOLDERS = [
   "Generate website with HextaUI",
@@ -55,7 +55,7 @@ const AIChatInput = () => {
  
   const handleActivate = () => setIsActive(true);
  
-  const containerVariants = {
+  const containerVariants: Variants = {
     collapsed: {
       height: 68, // Still 68, but we might want to change this if user really wants "no enlarge"
       boxShadow: "0 2px 8px 0 rgba(0,0,0,0.08)",
@@ -68,13 +68,13 @@ const AIChatInput = () => {
     },
   };
  
-  const placeholderContainerVariants = {
+  const placeholderContainerVariants: Variants = {
     initial: {},
     animate: { transition: { staggerChildren: 0.025 } },
     exit: { transition: { staggerChildren: 0.015, staggerDirection: -1 } },
   };
  
-  const letterVariants = {
+  const letterVariants: Variants = {
     initial: {
       opacity: 0,
       filter: "blur(12px)",
